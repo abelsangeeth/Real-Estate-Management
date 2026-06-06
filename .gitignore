@@ -14,3 +14,13 @@ Desktop.ini
 .idea/
 *.swp
 *.swo
+
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+
+# Local databases
+*.db
+*.db-journal
