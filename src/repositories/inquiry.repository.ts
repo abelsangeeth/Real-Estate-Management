@@ -1,42 +1,44 @@
-import prisma from '../utils/db';
-import { Prisma, Inquiry } from '@prisma/client';
+import { Inquiry, Prisma } from '@prisma/client';
+import { mockInquiries, mockListings, initMockDb } from '../utils/mockDb';
 
 export class InquiryRepository {
   async create(data: Prisma.InquiryUncheckedCreateInput): Promise<Inquiry> {
-    return prisma.inquiry.create({
-      data,
-    });
+    await initMockDb();
+    const listing = mockListings.find((l) => l.id === data.listingId);
+    if (!listing) {
+      throw new Error('Listing not found');
+    }
+
+    const newInquiry = {
+      id: `inq-${Date.now()}`,
+      clientName: data.clientName,
+      clientEmail: data.clientEmail,
+      clientPhone: data.clientPhone,
+      message: data.message,
+      requestedTourDate: data.requestedTourDate ?? null,
+      listingId: data.listingId,
+      userId: data.userId ?? null,
+      createdAt: new Date(),
+      listing: {
+        title: listing.title,
+        price: listing.price,
+        location: listing.location,
+      },
+    };
+    mockInquiries.push(newInquiry);
+
+    const { listing: _, ...inquiryObj } = newInquiry;
+    return inquiryObj as Inquiry;
   }
 
-  async findAll(): Promise<Inquiry[]> {
-    return prisma.inquiry.findMany({
-      include: {
-        listing: {
-          select: {
-            title: true,
-            price: true,
-            location: true,
-          },
-        },
-      },
-      orderBy: { createdAt: 'desc' },
-    });
+  async findAll(): Promise<any[]> {
+    await initMockDb();
+    return mockInquiries;
   }
 
-  async findByUserId(userId: string): Promise<Inquiry[]> {
-    return prisma.inquiry.findMany({
-      where: { userId },
-      include: {
-        listing: {
-          select: {
-            title: true,
-            price: true,
-            location: true,
-          },
-        },
-      },
-      orderBy: { createdAt: 'desc' },
-    });
+  async findByUserId(userId: string): Promise<any[]> {
+    await initMockDb();
+    return mockInquiries.filter((i) => i.userId === userId);
   }
 }
 

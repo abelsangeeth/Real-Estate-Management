@@ -1,4 +1,4 @@
-import { Prisma, Listing } from '@prisma/client';
+import { Listing, Prisma } from '@prisma/client';
 export interface ListingFilters {
     location?: string;
     minPrice?: number;

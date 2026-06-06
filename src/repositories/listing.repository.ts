@@ -1,5 +1,5 @@
-import prisma from '../utils/db';
-import { Prisma, Listing } from '@prisma/client';
+import { Listing, Prisma } from '@prisma/client';
+import { mockListings, initMockDb } from '../utils/mockDb';
 
 export interface ListingFilters {
   location?: string;
@@ -11,52 +11,91 @@ export interface ListingFilters {
 
 export class ListingRepository {
   async findAll(filters: ListingFilters = {}): Promise<Listing[]> {
-    const where: Prisma.ListingWhereInput = {};
+    await initMockDb();
+    let result = [...mockListings];
 
     if (filters.location) {
-      where.location = { contains: filters.location };
+      const locLower = filters.location.toLowerCase();
+      result = result.filter((l) => l.location.toLowerCase().includes(locLower));
     }
-    if (filters.minPrice !== undefined || filters.maxPrice !== undefined) {
-      where.price = {};
-      if (filters.minPrice !== undefined) where.price.gte = filters.minPrice;
-      if (filters.maxPrice !== undefined) where.price.lte = filters.maxPrice;
+    if (filters.minPrice !== undefined) {
+      result = result.filter((l) => l.price >= filters.minPrice!);
+    }
+    if (filters.maxPrice !== undefined) {
+      result = result.filter((l) => l.price <= filters.maxPrice!);
     }
     if (filters.bedrooms !== undefined) {
-      where.bedrooms = { gte: filters.bedrooms };
+      result = result.filter((l) => l.bedrooms >= filters.bedrooms!);
     }
     if (filters.isFeatured !== undefined) {
-      where.isFeatured = filters.isFeatured;
+      result = result.filter((l) => l.isFeatured === filters.isFeatured);
     }
 
-    return prisma.listing.findMany({
-      where,
-      orderBy: { price: 'asc' }, // premium listing sort order
-    });
+    return result.sort((a, b) => a.price - b.price);
   }
 
   async findById(id: string): Promise<Listing | null> {
-    return prisma.listing.findUnique({
-      where: { id },
-    });
+    await initMockDb();
+    const listing = mockListings.find((l) => l.id === id);
+    return listing || null;
   }
 
   async create(data: Prisma.ListingCreateInput): Promise<Listing> {
-    return prisma.listing.create({
-      data,
-    });
+    await initMockDb();
+    const newListing: Listing = {
+      id: `lst-${Date.now()}`,
+      title: data.title,
+      description: data.description,
+      price: data.price,
+      location: data.location,
+      bedrooms: data.bedrooms,
+      bathrooms: data.bathrooms,
+      areaSqFt: data.areaSqFt,
+      imageUrl: data.imageUrl,
+      isFeatured: data.isFeatured ?? false,
+      amenities: data.amenities,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    mockListings.push(newListing);
+    return newListing;
   }
 
   async update(id: string, data: Prisma.ListingUpdateInput): Promise<Listing> {
-    return prisma.listing.update({
-      where: { id },
-      data,
-    });
+    await initMockDb();
+    const index = mockListings.findIndex((l) => l.id === id);
+    if (index === -1) {
+      throw new Error('Listing not found');
+    }
+
+    const listing = mockListings[index];
+    const updated: Listing = {
+      ...listing,
+      title: (data.title as string) ?? listing.title,
+      description: (data.description as string) ?? listing.description,
+      price: (data.price as number) ?? listing.price,
+      location: (data.location as string) ?? listing.location,
+      bedrooms: (data.bedrooms as number) ?? listing.bedrooms,
+      bathrooms: (data.bathrooms as number) ?? listing.bathrooms,
+      areaSqFt: (data.areaSqFt as number) ?? listing.areaSqFt,
+      imageUrl: (data.imageUrl as string) ?? listing.imageUrl,
+      isFeatured: (data.isFeatured as boolean) ?? listing.isFeatured,
+      amenities: (data.amenities as string) ?? listing.amenities,
+      updatedAt: new Date(),
+    };
+
+    mockListings[index] = updated;
+    return updated;
   }
 
   async delete(id: string): Promise<Listing> {
-    return prisma.listing.delete({
-      where: { id },
-    });
+    await initMockDb();
+    const index = mockListings.findIndex((l) => l.id === id);
+    if (index === -1) {
+      throw new Error('Listing not found');
+    }
+    const deleted = mockListings.splice(index, 1)[0];
+    return deleted;
   }
 }
 

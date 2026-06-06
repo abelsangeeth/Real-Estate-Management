@@ -1,44 +1,41 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.inquiryRepository = exports.InquiryRepository = void 0;
-const db_1 = __importDefault(require("../utils/db"));
+const mockDb_1 = require("../utils/mockDb");
 class InquiryRepository {
     async create(data) {
-        return db_1.default.inquiry.create({
-            data,
-        });
+        await (0, mockDb_1.initMockDb)();
+        const listing = mockDb_1.mockListings.find((l) => l.id === data.listingId);
+        if (!listing) {
+            throw new Error('Listing not found');
+        }
+        const newInquiry = {
+            id: `inq-${Date.now()}`,
+            clientName: data.clientName,
+            clientEmail: data.clientEmail,
+            clientPhone: data.clientPhone,
+            message: data.message,
+            requestedTourDate: data.requestedTourDate ?? null,
+            listingId: data.listingId,
+            userId: data.userId ?? null,
+            createdAt: new Date(),
+            listing: {
+                title: listing.title,
+                price: listing.price,
+                location: listing.location,
+            },
+        };
+        mockDb_1.mockInquiries.push(newInquiry);
+        const { listing: _, ...inquiryObj } = newInquiry;
+        return inquiryObj;
     }
     async findAll() {
-        return db_1.default.inquiry.findMany({
-            include: {
-                listing: {
-                    select: {
-                        title: true,
-                        price: true,
-                        location: true,
-                    },
-                },
-            },
-            orderBy: { createdAt: 'desc' },
-        });
+        await (0, mockDb_1.initMockDb)();
+        return mockDb_1.mockInquiries;
     }
     async findByUserId(userId) {
-        return db_1.default.inquiry.findMany({
-            where: { userId },
-            include: {
-                listing: {
-                    select: {
-                        title: true,
-                        price: true,
-                        location: true,
-                    },
-                },
-            },
-            orderBy: { createdAt: 'desc' },
-        });
+        await (0, mockDb_1.initMockDb)();
+        return mockDb_1.mockInquiries.filter((i) => i.userId === userId);
     }
 }
 exports.InquiryRepository = InquiryRepository;

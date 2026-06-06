@@ -1,23 +1,32 @@
-import prisma from '../utils/db';
-import { Prisma, User } from '@prisma/client';
+import { User, Prisma } from '@prisma/client';
+import { mockUsers, initMockDb } from '../utils/mockDb';
 
 export class UserRepository {
   async findByEmail(email: string): Promise<User | null> {
-    return prisma.user.findUnique({
-      where: { email },
-    });
+    await initMockDb();
+    const user = mockUsers.find((u) => u.email === email);
+    return user || null;
   }
 
   async findById(id: string): Promise<User | null> {
-    return prisma.user.findUnique({
-      where: { id },
-    });
+    await initMockDb();
+    const user = mockUsers.find((u) => u.id === id);
+    return user || null;
   }
 
   async create(data: Prisma.UserCreateInput): Promise<User> {
-    return prisma.user.create({
-      data,
-    });
+    await initMockDb();
+    const newUser: User = {
+      id: `usr-${Date.now()}`,
+      email: data.email,
+      password: data.password,
+      name: data.name,
+      role: data.role || 'buyer',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    mockUsers.push(newUser);
+    return newUser;
   }
 }
 

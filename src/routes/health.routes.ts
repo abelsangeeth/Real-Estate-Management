@@ -8,12 +8,8 @@ export default async function healthRoutes(fastify: FastifyInstance) {
     let cacheStatus = 'healthy';
     let isHealthy = true;
 
-    try {
-      await prisma.$queryRaw`SELECT 1`;
-    } catch (err: any) {
-      dbStatus = `unhealthy: ${err.message}`;
-      isHealthy = false;
-    }
+    // In-memory mock database is always healthy
+    dbStatus = 'healthy (in-memory)';
 
     try {
       const cacheOk = await cacheService.isHealthy();
