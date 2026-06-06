@@ -1,5 +1,6 @@
 import Fastify from 'fastify';
 import path from 'path';
+import fs from 'fs';
 import cookie from '@fastify/cookie';
 import jwt from '@fastify/jwt';
 import cors from '@fastify/cors';
@@ -89,11 +90,15 @@ app.register(swaggerUi, {
   },
 });
 
-// Serve Frontend Static Site
-app.register(fastifyStatic, {
-  root: path.join(__dirname, '../public'),
-  prefix: '/',
-});
+// Serve Frontend Static Site (Only if directory exists locally, otherwise Vercel edge serves it)
+const publicDir = path.join(__dirname, '../public');
+if (fs.existsSync(publicDir)) {
+  app.register(fastifyStatic, {
+    root: publicDir,
+    prefix: '/',
+  });
+}
+
 
 // Register API Endpoints
 app.register(healthRoutes);
