@@ -11,7 +11,7 @@ export interface ListingFilters {
 
 export class ListingRepository {
   async findAll(filters: ListingFilters = {}): Promise<Listing[]> {
-    await initMockDb();
+    initMockDb();
     let result = [...mockListings];
 
     if (filters.location) {
@@ -35,13 +35,13 @@ export class ListingRepository {
   }
 
   async findById(id: string): Promise<Listing | null> {
-    await initMockDb();
+    initMockDb();
     const listing = mockListings.find((l) => l.id === id);
     return listing || null;
   }
 
   async create(data: ListingCreateInput): Promise<Listing> {
-    await initMockDb();
+    initMockDb();
     const newListing: Listing = {
       id: `lst-${Date.now()}`,
       title: data.title,
@@ -62,7 +62,7 @@ export class ListingRepository {
   }
 
   async update(id: string, data: ListingUpdateInput): Promise<Listing> {
-    await initMockDb();
+    initMockDb();
     const index = mockListings.findIndex((l) => l.id === id);
     if (index === -1) {
       throw new Error('Listing not found');
@@ -89,7 +89,7 @@ export class ListingRepository {
   }
 
   async delete(id: string): Promise<Listing> {
-    await initMockDb();
+    initMockDb();
     const index = mockListings.findIndex((l) => l.id === id);
     if (index === -1) {
       throw new Error('Listing not found');

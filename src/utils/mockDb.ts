@@ -1,4 +1,4 @@
-import * as bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import { User, Listing, Inquiry } from '../types/models';
 
 export let mockUsers: User[] = [];
@@ -9,13 +9,13 @@ export const mockInquiries: (Inquiry & {
 
 let isInitialized = false;
 
-export async function initMockDb() {
+export function initMockDb() {
   if (isInitialized) return;
 
-  const saltRounds = 10;
-  const adminPassword = await bcrypt.hash('admin123', saltRounds);
-  const agentPassword = await bcrypt.hash('agent123', saltRounds);
-  const buyerPassword = await bcrypt.hash('buyer123', saltRounds);
+  // Use saltRounds=1 for fast startup — this is demo/dummy data only
+  const adminPassword = bcrypt.hashSync('admin123', 1);
+  const agentPassword = bcrypt.hashSync('agent123', 1);
+  const buyerPassword = bcrypt.hashSync('buyer123', 1);
 
   mockUsers = [
     {

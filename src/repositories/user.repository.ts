@@ -3,19 +3,19 @@ import { mockUsers, initMockDb } from '../utils/mockDb';
 
 export class UserRepository {
   async findByEmail(email: string): Promise<User | null> {
-    await initMockDb();
+    initMockDb();
     const user = mockUsers.find((u) => u.email === email);
     return user || null;
   }
 
   async findById(id: string): Promise<User | null> {
-    await initMockDb();
+    initMockDb();
     const user = mockUsers.find((u) => u.id === id);
     return user || null;
   }
 
   async create(data: UserCreateInput): Promise<User> {
-    await initMockDb();
+    initMockDb();
     const newUser: User = {
       id: `usr-${Date.now()}`,
       email: data.email,

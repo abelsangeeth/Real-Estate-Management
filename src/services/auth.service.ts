@@ -1,4 +1,4 @@
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import userRepository from '../repositories/user.repository';
 import { AppError } from '../middleware/error.middleware';
 import { User, UserCreateInput } from '../types/models';

@@ -3,7 +3,7 @@ import { mockInquiries, mockListings, initMockDb } from '../utils/mockDb';
 
 export class InquiryRepository {
   async create(data: InquiryCreateInput): Promise<Inquiry> {
-    await initMockDb();
+    initMockDb();
     const listing = mockListings.find((l) => l.id === data.listingId);
     if (!listing) {
       throw new Error('Listing not found');
@@ -32,12 +32,12 @@ export class InquiryRepository {
   }
 
   async findAll(): Promise<any[]> {
-    await initMockDb();
+    initMockDb();
     return mockInquiries;
   }
 
   async findByUserId(userId: string): Promise<any[]> {
-    await initMockDb();
+    initMockDb();
     return mockInquiries.filter((i) => i.userId === userId);
   }
 }
