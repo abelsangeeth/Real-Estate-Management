@@ -4,6 +4,9 @@
     { "source": "/api/(.*)", "destination": "/api/index.ts" },
     { "source": "/docs", "destination": "/api/index.ts" },
     { "source": "/health", "destination": "/api/index.ts" },
-    { "source": "/(.*)", "destination": "/public/$1" }
+    { "source": "/", "destination": "/public/index.html" },
+    { "source": "/css/(.*)", "destination": "/public/css/$1" },
+    { "source": "/js/(.*)", "destination": "/public/js/$1" },
+    { "source": "/assets/(.*)", "destination": "/public/assets/$1" }
   ]
 }
