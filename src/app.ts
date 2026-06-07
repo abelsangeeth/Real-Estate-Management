@@ -91,19 +91,11 @@ app.register(swaggerUi, {
 });
 
 // Serve Frontend Static Files
-// path.resolve works correctly in both local and Vercel serverless environments
 const publicDir = path.resolve(process.cwd(), 'public');
 if (fs.existsSync(publicDir)) {
   app.register(fastifyStatic, {
     root: publicDir,
     prefix: '/',
-    // Don't throw 404 for missing files — let Fastify fallthrough to API routes
-    wildcard: false,
-  });
-
-  // Serve index.html for the root path explicitly
-  app.get('/', async (_req, reply) => {
-    return reply.sendFile('index.html');
   });
 }
 
