@@ -1,5 +1,5 @@
 import * as bcrypt from 'bcrypt';
-import { User, Listing, Inquiry } from '@prisma/client';
+import { User, Listing, Inquiry } from '../types/models';
 
 export let mockUsers: User[] = [];
 export let mockListings: Listing[] = [];

@@ -1,4 +1,4 @@
-import { Listing, Prisma } from '@prisma/client';
+import { Listing, ListingCreateInput, ListingUpdateInput } from '../types/models';
 import { mockListings, initMockDb } from '../utils/mockDb';
 
 export interface ListingFilters {
@@ -40,7 +40,7 @@ export class ListingRepository {
     return listing || null;
   }
 
-  async create(data: Prisma.ListingCreateInput): Promise<Listing> {
+  async create(data: ListingCreateInput): Promise<Listing> {
     await initMockDb();
     const newListing: Listing = {
       id: `lst-${Date.now()}`,
@@ -61,7 +61,7 @@ export class ListingRepository {
     return newListing;
   }
 
-  async update(id: string, data: Prisma.ListingUpdateInput): Promise<Listing> {
+  async update(id: string, data: ListingUpdateInput): Promise<Listing> {
     await initMockDb();
     const index = mockListings.findIndex((l) => l.id === id);
     if (index === -1) {
@@ -71,16 +71,16 @@ export class ListingRepository {
     const listing = mockListings[index];
     const updated: Listing = {
       ...listing,
-      title: (data.title as string) ?? listing.title,
-      description: (data.description as string) ?? listing.description,
-      price: (data.price as number) ?? listing.price,
-      location: (data.location as string) ?? listing.location,
-      bedrooms: (data.bedrooms as number) ?? listing.bedrooms,
-      bathrooms: (data.bathrooms as number) ?? listing.bathrooms,
-      areaSqFt: (data.areaSqFt as number) ?? listing.areaSqFt,
-      imageUrl: (data.imageUrl as string) ?? listing.imageUrl,
-      isFeatured: (data.isFeatured as boolean) ?? listing.isFeatured,
-      amenities: (data.amenities as string) ?? listing.amenities,
+      title: data.title ?? listing.title,
+      description: data.description ?? listing.description,
+      price: data.price ?? listing.price,
+      location: data.location ?? listing.location,
+      bedrooms: data.bedrooms ?? listing.bedrooms,
+      bathrooms: data.bathrooms ?? listing.bathrooms,
+      areaSqFt: data.areaSqFt ?? listing.areaSqFt,
+      imageUrl: data.imageUrl ?? listing.imageUrl,
+      isFeatured: data.isFeatured ?? listing.isFeatured,
+      amenities: data.amenities ?? listing.amenities,
       updatedAt: new Date(),
     };
 

@@ -1,8 +1,8 @@
-import { Inquiry, Prisma } from '@prisma/client';
+import { Inquiry, InquiryCreateInput } from '../types/models';
 import { mockInquiries, mockListings, initMockDb } from '../utils/mockDb';
 
 export class InquiryRepository {
-  async create(data: Prisma.InquiryUncheckedCreateInput): Promise<Inquiry> {
+  async create(data: InquiryCreateInput): Promise<Inquiry> {
     await initMockDb();
     const listing = mockListings.find((l) => l.id === data.listingId);
     if (!listing) {
@@ -15,9 +15,9 @@ export class InquiryRepository {
       clientEmail: data.clientEmail,
       clientPhone: data.clientPhone,
       message: data.message,
-      requestedTourDate: data.requestedTourDate ?? null,
+      requestedTourDate: data.requestedTourDate ?? undefined,
       listingId: data.listingId,
-      userId: data.userId ?? null,
+      userId: data.userId ?? undefined,
       createdAt: new Date(),
       listing: {
         title: listing.title,

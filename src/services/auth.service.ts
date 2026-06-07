@@ -1,10 +1,10 @@
 import bcrypt from 'bcrypt';
 import userRepository from '../repositories/user.repository';
 import { AppError } from '../middleware/error.middleware';
-import { Prisma, User } from '@prisma/client';
+import { User, UserCreateInput } from '../types/models';
 
 export class AuthService {
-  async register(data: Prisma.UserCreateInput): Promise<Omit<User, 'password'>> {
+  async register(data: UserCreateInput): Promise<Omit<User, 'password'>> {
     const existing = await userRepository.findByEmail(data.email);
     if (existing) {
       throw new AppError(409, 'A user with this email already exists.');

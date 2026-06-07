@@ -1,5 +1,4 @@
 import { FastifyInstance } from 'fastify';
-import prisma from '../utils/db';
 import cacheService from '../services/cache.service';
 
 export default async function healthRoutes(fastify: FastifyInstance) {

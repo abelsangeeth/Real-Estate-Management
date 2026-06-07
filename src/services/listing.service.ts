@@ -1,6 +1,6 @@
 import listingRepository, { ListingFilters } from '../repositories/listing.repository';
 import cacheService from './cache.service';
-import { Prisma, Listing } from '@prisma/client';
+import { Listing, ListingCreateInput, ListingUpdateInput } from '../types/models';
 import { AppError } from '../middleware/error.middleware';
 
 export class ListingService {
@@ -32,13 +32,13 @@ export class ListingService {
     return listing;
   }
 
-  async createListing(data: Prisma.ListingCreateInput): Promise<Listing> {
+  async createListing(data: ListingCreateInput): Promise<Listing> {
     const listing = await listingRepository.create(data);
     await this.invalidateCache(listing.id);
     return listing;
   }
 
-  async updateListing(id: string, data: Prisma.ListingUpdateInput): Promise<Listing> {
+  async updateListing(id: string, data: ListingUpdateInput): Promise<Listing> {
     // Verify listing existence first
     await this.getListingById(id);
 

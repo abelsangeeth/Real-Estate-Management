@@ -17,7 +17,7 @@ export class InquiryController {
     const data = createInquirySchema.parse(request.body);
 
     const decodedUser = request.user as DecodedToken | undefined;
-    const userId = decodedUser?.id || null;
+    const userId = decodedUser?.id || undefined;
 
     const inquiry = await inquiryService.createInquiry({
       ...data,

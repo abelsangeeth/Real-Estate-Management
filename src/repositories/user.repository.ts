@@ -1,4 +1,4 @@
-import { User, Prisma } from '@prisma/client';
+import { User, UserCreateInput } from '../types/models';
 import { mockUsers, initMockDb } from '../utils/mockDb';
 
 export class UserRepository {
@@ -14,7 +14,7 @@ export class UserRepository {
     return user || null;
   }
 
-  async create(data: Prisma.UserCreateInput): Promise<User> {
+  async create(data: UserCreateInput): Promise<User> {
     await initMockDb();
     const newUser: User = {
       id: `usr-${Date.now()}`,

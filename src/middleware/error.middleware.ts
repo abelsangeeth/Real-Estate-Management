@@ -65,16 +65,8 @@ export const errorHandler = (error: FastifyError, request: FastifyRequest, reply
     });
   }
 
-  // Handle Database Errors
-  if (error.message && error.message.includes('Prisma')) {
-    if (error.message.includes('P2002')) {
-      return reply.status(409).send({
-        success: false,
-        error: 'Conflict Error',
-        details: 'A record with this unique field already exists.',
-      });
-    }
-
+  // Handle Database Errors (simulated by generic errors if needed)
+  if (error.message && error.message.includes('Database Error')) {
     return reply.status(500).send({
       success: false,
       error: 'Database Error',

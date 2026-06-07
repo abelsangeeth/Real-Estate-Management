@@ -1,10 +1,10 @@
 import inquiryRepository from '../repositories/inquiry.repository';
 import listingRepository from '../repositories/listing.repository';
 import { AppError } from '../middleware/error.middleware';
-import { Prisma, Inquiry } from '@prisma/client';
+import { Inquiry, InquiryCreateInput } from '../types/models';
 
 export class InquiryService {
-  async createInquiry(data: Prisma.InquiryUncheckedCreateInput): Promise<Inquiry> {
+  async createInquiry(data: InquiryCreateInput): Promise<Inquiry> {
     // Validate listing association
     const listing = await listingRepository.findById(data.listingId);
     if (!listing) {
