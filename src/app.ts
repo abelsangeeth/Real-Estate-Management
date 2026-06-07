@@ -1,9 +1,12 @@
 import Fastify from 'fastify';
+import path from 'path';
+import fs from 'fs';
 import cookie from '@fastify/cookie';
 import jwt from '@fastify/jwt';
 import cors from '@fastify/cors';
 import helmet from '@fastify/helmet';
 import rateLimit from '@fastify/rate-limit';
+import fastifyStatic from '@fastify/static';
 import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';
 
@@ -86,6 +89,23 @@ app.register(swaggerUi, {
     deepLinking: true,
   },
 });
+
+// Serve Frontend Static Files
+// path.resolve works correctly in both local and Vercel serverless environments
+const publicDir = path.resolve(process.cwd(), 'public');
+if (fs.existsSync(publicDir)) {
+  app.register(fastifyStatic, {
+    root: publicDir,
+    prefix: '/',
+    // Don't throw 404 for missing files — let Fastify fallthrough to API routes
+    wildcard: false,
+  });
+
+  // Serve index.html for the root path explicitly
+  app.get('/', async (_req, reply) => {
+    return reply.sendFile('index.html');
+  });
+}
 
 // Register API Endpoints
 app.register(healthRoutes);
