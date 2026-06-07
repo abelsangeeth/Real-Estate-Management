@@ -1,12 +1,9 @@
 import Fastify from 'fastify';
-import path from 'path';
-import fs from 'fs';
 import cookie from '@fastify/cookie';
 import jwt from '@fastify/jwt';
 import cors from '@fastify/cors';
 import helmet from '@fastify/helmet';
 import rateLimit from '@fastify/rate-limit';
-import fastifyStatic from '@fastify/static';
 import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';
 
@@ -31,7 +28,7 @@ app.register(helmet, {
       defaultSrc: ["'self'"],
       styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
       fontSrc: ["'self'", 'https://fonts.gstatic.com'],
-      imgSrc: ["'self'", 'data:', 'https://images.unsplash.com'], // allow unsplash placeholders/photos
+      imgSrc: ["'self'", 'data:', 'https://images.unsplash.com'],
       scriptSrc: ["'self'", "'unsafe-inline'"],
     },
   },
@@ -69,7 +66,7 @@ app.register(swagger, {
         'High-performance, enterprise-grade REST API powering the AURA luxury real estate website.',
       version: '1.0.0',
     },
-    servers: [{ url: 'http://localhost:3000' }],
+    servers: [{ url: '/' }],
     components: {
       securitySchemes: {
         cookieAuth: {
@@ -90,16 +87,6 @@ app.register(swaggerUi, {
   },
 });
 
-// Serve Frontend Static Site (Only if directory exists locally, otherwise Vercel edge serves it)
-const publicDir = path.join(__dirname, '../public');
-if (fs.existsSync(publicDir)) {
-  app.register(fastifyStatic, {
-    root: publicDir,
-    prefix: '/',
-  });
-}
-
-
 // Register API Endpoints
 app.register(healthRoutes);
 app.register(authRoutes, { prefix: '/api/auth' });
@@ -107,3 +94,4 @@ app.register(listingRoutes, { prefix: '/api/listings' });
 app.register(inquiryRoutes, { prefix: '/api/inquiries' });
 
 export default app;
+
